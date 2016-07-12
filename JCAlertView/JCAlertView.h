@@ -25,6 +25,9 @@ typedef NS_ENUM(NSInteger, JCAlertViewButtonType) {
 
 @interface JCAlertView : UIView
 
+@property (nonatomic, getter=isDismissWhenTouchBackground) BOOL dismissWhenTouchBackground;
+@property (nonatomic) NSInteger defaultIndex;
+
 // ------------------------Show AlertView with title and message----------------------
 
 // show alertView with 1 button

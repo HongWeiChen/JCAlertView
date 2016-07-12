@@ -49,7 +49,6 @@ NSString *const JCAlertViewDidDismissNotification = @"JCAlertViewDidDismissNotif
 @property (nonatomic, weak) JCViewController *vc;
 @property (nonatomic, strong) UIImageView *screenShotView;
 @property (nonatomic, getter=isCustomAlert) BOOL customAlert;
-@property (nonatomic, getter=isDismissWhenTouchBackground) BOOL dismissWhenTouchBackground;
 @property (nonatomic, getter=isAlertReady) BOOL alertReady;
 
 - (void)setup;
@@ -228,6 +227,8 @@ NSString *const JCAlertViewDidDismissNotification = @"JCAlertViewDidDismissNotif
     self.screenShotView = [[UIImageView alloc] initWithImage:outputImage];
     
     [self.view addSubview:self.screenShotView];
+    
+    self.coverView.backgroundColor = [UIColor whiteColor];
 }
 
 - (void)addCoverView{
@@ -602,9 +603,9 @@ buttonType ButtonTitle:(NSString *)buttonTitle Click:(clickHandle)click ButtonTy
         UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(JCMargin, self.frame.size.height - JCButtonHeight - JCMargin, JCAlertViewWidth - JCMargin * 2, JCButtonHeight)];
         NSDictionary *btnDict = [self.buttons firstObject];
         [btn setTitle:[btnDict.allValues firstObject] forState:UIControlStateNormal];
+        btn.tag = 0;
         [self setButton:btn BackgroundWithButonType:[[btnDict.allKeys firstObject] integerValue]];
         [self addSubview:btn];
-        btn.tag = 0;
         [btn addTarget:self action:@selector(alertBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     } else if (count == 2) {
         for (int i = 0; i < 2; i++) {
@@ -612,9 +613,9 @@ buttonType ButtonTitle:(NSString *)buttonTitle Click:(clickHandle)click ButtonTy
             UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(JCMargin + (JCMargin + btnWidth) * i, self.frame.size.height - JCButtonHeight - JCMargin, btnWidth, JCButtonHeight)];
             NSDictionary *btnDict = self.buttons[i];
             [btn setTitle:[btnDict.allValues firstObject] forState:UIControlStateNormal];
+            btn.tag = i;
             [self setButton:btn BackgroundWithButonType:[[btnDict.allKeys firstObject] integerValue]];
             [self addSubview:btn];
-            btn.tag = i;
             [btn addTarget:self action:@selector(alertBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         }
     } else if (count > 2) {
@@ -625,9 +626,9 @@ buttonType ButtonTitle:(NSString *)buttonTitle Click:(clickHandle)click ButtonTy
             UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(JCMargin, JCAlertViewTitleLabelHeight + contentHeight + JCMargin + (JCMargin + JCButtonHeight) * i, JCAlertViewWidth - JCMargin * 2, JCButtonHeight)];
             NSDictionary *btnDict = self.buttons[i];
             [btn setTitle:[btnDict.allValues firstObject] forState:UIControlStateNormal];
+            btn.tag = i;
             [self setButton:btn BackgroundWithButonType:[[btnDict.allKeys firstObject] integerValue]];
             [self addSubview:btn];
-            btn.tag = i;
             [btn addTarget:self action:@selector(alertBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         }
     }
@@ -635,27 +636,37 @@ buttonType ButtonTitle:(NSString *)buttonTitle Click:(clickHandle)click ButtonTy
 
 - (void)setButton:(UIButton *)btn BackgroundWithButonType:(JCAlertViewButtonType)buttonType{
     UIColor *textColor = nil;
-    UIImage *normalImage = nil;
-    UIImage *highImage = nil;
+    UIColor *backgroundColor = nil;
+    //    UIImage *normalImage = nil;
+    //    UIImage *highImage = nil;
     switch (buttonType) {
         case JCAlertViewButtonTypeDefault:
-            normalImage = [UIImage imageNamed:@"JCAlertView.bundle/default_nor"];
-            highImage = [UIImage imageNamed:@"JCAlertView.bundle/default_high"];
-            textColor = JCColor(255, 255, 255);
+            backgroundColor = JCColor(238, 238, 238);
+            //            normalImage = [UIImage imageNamed:@"JCAlertView.bundle/default_nor"];
+            //            highImage = [UIImage imageNamed:@"JCAlertView.bundle/default_high"];
+            textColor = JCColor(90, 90, 90);
             break;
         case JCAlertViewButtonTypeCancel:
-            normalImage = [UIImage imageNamed:@"JCAlertView.bundle/cancel_nor"];
-            highImage = [UIImage imageNamed:@"JCAlertView.bundle/cancel_high"];
+            backgroundColor = JCColor(103, 178, 250);
+            //            normalImage = [UIImage imageNamed:@"JCAlertView.bundle/cancel_nor"];
+            //            highImage = [UIImage imageNamed:@"JCAlertView.bundle/cancel_high"];
             textColor = JCColor(255, 255, 255);
             break;
         case JCAlertViewButtonTypeWarn:
-            normalImage = [UIImage imageNamed:@"JCAlertView.bundle/warn_nor"];
-            highImage = [UIImage imageNamed:@"JCAlertView.bundle/warn_high"];
+            backgroundColor = JCColor(0, 0, 0);
+            //            normalImage = [UIImage imageNamed:@"JCAlertView.bundle/warn_nor"];
+            //            highImage = [UIImage imageNamed:@"JCAlertView.bundle/warn_high"];
             textColor = JCColor(255, 255, 255);
             break;
     }
-    [btn setBackgroundImage:[self resizeImage:normalImage] forState:UIControlStateNormal];
-    [btn setBackgroundImage:[self resizeImage:highImage] forState:UIControlStateHighlighted];
+    //    [btn setBackgroundImage:[self resizeImage:normalImage] forState:UIControlStateNormal];
+    //    [btn setBackgroundImage:[self resizeImage:highImage] forState:UIControlStateHighlighted];
+    [btn setImage:[UIImage imageNamed:@"pop_live_select_icon"] forState:UIControlStateSelected];
+    btn.imageEdgeInsets = UIEdgeInsetsMake(0, self.frame.size.width - 40, 0, 0);
+    btn.backgroundColor = backgroundColor;
+    if (_defaultIndex == btn.tag) {
+        btn.selected = YES;
+    }
     [btn setTitleColor:textColor forState:UIControlStateNormal];
 }
 
